@@ -13,13 +13,25 @@ gem 'health_check', github: 'salonized/health_check'
 Add the following to `config/application.rb` or `config/environments/production.rb`.
 
 ```ruby
-config.middleware.insert_before Rails::Rack::Logger, HealthCheck::Middleware, endpoint: '/ping', status_code: 200
+config.middleware.insert_before Rails::Rack::Logger, HealthCheck::Middleware, options
 ```
 
 Or to your `config.ru` for plain Rack.
 
 ```ruby
 use HealthCheck::Middleware, endpoint: '/ping', status_code: 200
+```
+
+### Configuration
+
+The following options are accepted (printed with their defaults).
+
+```ruby
+{
+  endpoint: '/ping',
+  response_status: 200,
+  response_body: 'OK'
+}
 ```
 
 ## License

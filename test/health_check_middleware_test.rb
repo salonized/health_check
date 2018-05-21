@@ -3,7 +3,8 @@ require "test_helper"
 class HealthCheck::MiddlewareTest < Minitest::Test
   def setup
     @endpoint = '/health'
-    @status_code = 201
+    @body = 'YEA'
+    @status = 201
   end
 
 
@@ -13,13 +14,15 @@ class HealthCheck::MiddlewareTest < Minitest::Test
 
   def test_default_values
     assert_equal '/ping', middleware.config.endpoint
-    assert_equal 200, middleware.config.status_code
+    assert_equal 200, middleware.config.response_status
+    assert_equal 'OK', middleware.config.response_body
   end
 
   def test_custom_options
-    middleware(endpoint: @endpoint, status_code: @status_code)
+    middleware(endpoint: @endpoint, response_status: @status, response_body: @body)
 
     assert_equal @endpoint, middleware.config.endpoint
-    assert_equal @status_code, middleware.config.status_code
+    assert_equal @status, middleware.config.response_status
+    assert_equal @body, middleware.config.response_body
   end
 end

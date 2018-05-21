@@ -1,23 +1,11 @@
 module HealthCheck
   class Middleware
-    # class Configuration
-    #   attr_accessor :endpoint, :status_code
-    #
-    #   def initialize(options = {})
-    #     self.endpoint = '/ping'
-    #     self.status_code = 200
-    #
-    #     Hash[options].each do |key,value|
-    #       instance_variable_set(key, value)
-    #     end
-    #   end
-    # end
-
     class << self
       def default_options
         {
           endpoint: '/ping',
-          status_code: 200
+          response_status: 200,
+          response_body: 'OK',
         }
       end
     end
@@ -30,18 +18,21 @@ module HealthCheck
     end
 
     def call(env)
-      dup._call(env)
+      if env["PATH_INFO"] == config.endpoint
+        [status, {"Content-Type" => "text/html", "Content-Length" => body.length}, [body]]
+      else
+        @app.call(env)
+      end
     end
 
-    def _call(env)
-      status, headers, body = app.call(env)
-      if status == 404 && env.fetch('PATH_INFO') == config.endpoint
-        [config.status_code, {}, ['']]
-      else
-        [status, headers, body]
-      end
-    ensure
-      body.close if body && body.respond_to?(:close) && $!
+    private
+
+    def body
+      @body ||= config.response_body.to_s
+    end
+
+    def status
+      @status ||= config.response_status
     end
   end
 end
