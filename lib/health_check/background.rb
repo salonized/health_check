@@ -6,7 +6,7 @@ module HealthCheck
       @message = message
 
       Thread.abort_on_exception = true
-      Thread.kill(thread) if thread && thread.alive?
+      Thread.kill(@thread) if @thread && @thread.alive?
 
       @thread = Thread.new { run }
     end
