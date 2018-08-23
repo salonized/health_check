@@ -13,8 +13,8 @@ module HealthCheck
 
     def run
       loop do
-        client = server.accept
-        client.puts(message) if message.present?
+        client = @server.accept
+        client.puts(@message) if @message.present?
         client.close
       end
     end
